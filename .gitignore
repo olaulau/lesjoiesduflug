@@ -1,1 +1,6 @@
+.buildpath
+.project
+.settings/
+
 mysql_config.php
+rss
