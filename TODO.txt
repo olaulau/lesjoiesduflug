@@ -1,0 +1,6 @@
+- créer class SimpleDOMDocument extends DOMDocumùent & Co pour faciliter l'accès aux fils
+- download & mise en cache pendant une période donnée (anti-flood du serveur distant)
+- paramétrer le nickname remplacé
+- cron & accumulation des item en BdD
+- flux rss complet
+- site paginé
