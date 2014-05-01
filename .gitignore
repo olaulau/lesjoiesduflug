@@ -2,6 +2,6 @@
 .project
 .settings/
 
-mysql_config.php
-rss
-rss.xml
+includes/config/mysql_config.php
+cache/
+ljdf.sqlite

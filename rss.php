@@ -1,7 +1,7 @@
 <?php
 
-// require_once 'mysql_config.php';
-require_once 'config.php';
+// require_once 'includes/config/mysql_config.php';
+require_once 'includes/config/config.php';
 
 
 
@@ -9,7 +9,7 @@ require_once 'config.php';
 $rss_url = "http://lesjoiesducode.fr/rss";
 //TODO : download ( wget http://lesjoiesducode.fr/rss )
 
-$documentString = file_get_contents("rss");
+$documentString = file_get_contents("cache/rss");
 $dom = new DOMDocument();
 $dom->loadXML($documentString);
 
