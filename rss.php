@@ -4,17 +4,21 @@
 require_once 'includes/config/config.php';
 
 
-
-//TODO : check if file exists, also download if not
-$mtime = filemtime("cache/rss");
-$time = time();
-$delta = ($time - $mtime) - $rss_cache_lifetime;
-if($delta > 0) { // redownload
-	$documentString = file_get_contents($rss_url);
-	file_put_contents("cache/rss", $documentString);
+if(file_exists($rss_cache_file)) { //calculate real delta
+	$mtime = filemtime($rss_cache_file);
+	$time = time();
+	$delta = ($time - $mtime) - $rss_cache_lifetime;
 }
-else { // just read
-	$documentString = file_get_contents("cache/rss");
+else  { // fake delta, force download
+	$delta = 1;
+}
+
+if($delta > 0) { // (re)download
+	$documentString = file_get_contents($rss_url);
+	file_put_contents($rss_cache_file, $documentString);
+}
+else { // just read cache file
+	$documentString = file_get_contents($rss_cache_file);
 }
 
 $dom = new DOMDocument();
@@ -36,7 +40,7 @@ foreach($channel->childNodes as $item)
 {
 	/* @var $item DOMNode */
 	// 	print_r($item);
-	if($item->nodeName=='item')
+	if($item->nodeName == 'item')
 	{
 		$items[] = $item; // stack items for further compute
 	}	
@@ -47,7 +51,7 @@ foreach ($items as $item) { //compute the stack
 // 	print_r($item);
 	foreach($item->childNodes as $itemChild)
 	{
-		if($itemChild->nodeName=='title')
+		if($itemChild->nodeName == 'title')
 		{
 			/* @var $itemChild DOMNode */
 			// 	print_r($itemChild);
