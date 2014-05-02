@@ -1,5 +1,8 @@
 <?php
 
+$rss_url = "http://lesjoiesducode.fr/rss";
+$rss_cache_lifetime = 5*60; // 5 min
+
 $firstname = "Flo";
 
 $replacement_patterns = array(

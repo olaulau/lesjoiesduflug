@@ -5,11 +5,18 @@ require_once 'includes/config/config.php';
 
 
 
+//TODO : check if file exists, also download if not
+$mtime = filemtime("cache/rss");
+$time = time();
+$delta = ($time - $mtime) - $rss_cache_lifetime;
+if($delta > 0) { // redownload
+	$documentString = file_get_contents($rss_url);
+	file_put_contents("cache/rss", $documentString);
+}
+else { // just read
+	$documentString = file_get_contents("cache/rss");
+}
 
-$rss_url = "http://lesjoiesducode.fr/rss";
-//TODO : download ( wget http://lesjoiesducode.fr/rss )
-
-$documentString = file_get_contents("cache/rss");
 $dom = new DOMDocument();
 $dom->loadXML($documentString);
 
