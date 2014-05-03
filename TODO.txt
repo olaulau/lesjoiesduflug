@@ -1,4 +1,3 @@
-- créer class SimpleDOMDocument extends DOMDocumùent & Co pour faciliter l'accès aux fils
 - paramétrer le nickname remplacé
 - cron & accumulation des item en BdD
 - flux rss complet

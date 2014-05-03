@@ -1,7 +1,7 @@
 <?php
 
-// require_once 'includes/config/mysql_config.php';
 require_once 'includes/config/config.php';
+require_once 'includes/SimpleDOMDocument.class.php';
 
 
 if(file_exists($rss_cache_file)) { //calculate real delta
@@ -21,69 +21,37 @@ else { // just read cache file
 	$documentString = file_get_contents($rss_cache_file);
 }
 
-$dom = new DOMDocument();
-$dom->loadXML($documentString);
-
-// echo "<pre>";
-// print_r($rss); die;
-
-$rss = $dom->childNodes->item(0);
-// print_r($rss); die;
-$channel = $rss->childNodes->item(0);
-// print_r($channel); die;
+$dom = SimpleDOMDocument::fromXmlString($documentString);
+$rss = $dom->getFirstChild();
+$channel = $rss->getFirstChild();
 
 $searches = array_keys($replacement_patterns);
 $replaces = array_values($replacement_patterns);
 
-$items = array();
-foreach($channel->childNodes as $item)
-{
-	/* @var $item DOMNode */
-	// 	print_r($item);
-	if($item->nodeName == 'item')
-	{
-		$items[] = $item; // stack items for further compute
-	}	
-}
-
+$items = $channel->getChildrenOfType('item');
 foreach ($items as $item) { //compute the stack
-	/* @var $item DOMNode */
-// 	print_r($item);
-	foreach($item->childNodes as $itemChild)
-	{
-		if($itemChild->nodeName == 'title')
-		{
-			/* @var $itemChild DOMNode */
-			// 	print_r($itemChild);
-			$title = $itemChild->nodeValue;
-			// 	var_dump($title);
+	/* @var $item SimpleDOMDocument */
+
+	$itemChild = $item->getFirstChildOfType('title');
+	/* @var $itemChild SimpleDOMDocument */
 	
-			$title = str_replace($searches, $replaces, $title, $count);
-			// 	continue;
-			if($count > 0) {
-// 				echo $title . PHP_EOL;
-				$itemChild->nodeValue = $title;
-			}
-			else {
-				$channel->removeChild($item);
-			}
-		}
-			
+	$title = $itemChild->getValue();
+	$title = str_replace($searches, $replaces, $title, $count);
+	if($count > 0) {
+ 		$itemChild->setValue($title);
+	}
+	else {
+		$item->delete();
 	}
 }
 
 
+$channel->getFirstChildOfType('title')->setValue("Les joies du flug");
+$channel->getFirstChildOfType('link')->setValue("http://www.lesjoiesduflug.fr.am/");
 
-
-// echo "</pre>";
-
-
-
-//TODO : recode with DOMDocument API
-// $rss->channel->title = "Les joies du flug";
-// $rss->channel->link = "http://www.lesjoiesduflug.fr.am/";
 
 header('Content-Type:text/xml; charset=utf-8');
-echo $dom->saveXML();
+echo $dom->toXmlString();
+
 
 ?>
